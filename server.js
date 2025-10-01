@@ -35,22 +35,25 @@ app.get("/", (req, res) => {
   res.send("🚀 Smartz Backend is running!");
 });
 
+// ✅ HTTP + Socket.IO
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*", // ⚠️ for production, restrict origins
+    methods: ["GET", "POST"],
+  },
+});
+
+// ✅ Make io available in routes
+app.set("io", io);
+
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/customer", customerRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/admin", adminRoutes);
-
-// ✅ HTTP + Socket.IO
-const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: {
-    origin: "*", // ⚠️ for production restrict origins like in CORS above
-    methods: ["GET", "POST"],
-  },
-});
 
 // ✅ Socket.IO connection
 io.on("connection", (socket) => {
